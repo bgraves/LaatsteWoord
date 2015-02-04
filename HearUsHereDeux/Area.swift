@@ -14,6 +14,7 @@ class Area {
 	var triggers: [GPSTrigger]!
 	var sounds: [Sound]!
 	var coordinates: [Double]
+	var polygon: MKPolygon!
 	
 	init() {
 		self.triggers = []
@@ -99,5 +100,18 @@ class Area {
 			allLoaded = allLoaded && sound.loaded
 		}
 		return allLoaded
+	}
+	
+	func isCompleted() -> Bool {
+		if sounds.count != 0 {
+			return false
+		}
+		var playing = false
+		for trigger in triggers {
+			if let player = trigger.audioPlayer {
+				playing = playing && player.playing
+			}
+		}
+		return !playing
 	}
 }

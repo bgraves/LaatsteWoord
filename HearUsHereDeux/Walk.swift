@@ -14,6 +14,10 @@ class Walk {
 	let requestURL = "http://hearushere.nl/triggers.json"
 	var areas: [Area]!
 	
+	var firstSound: Sound!
+	var lastSound: Sound!
+	var outOfBoundsSound: Sound!
+	
 	init() {
 		self.areas = []
 	}
@@ -36,6 +40,9 @@ class Walk {
 						var area: Area = Area(dict: areaDict as NSDictionary)
 						self.areas.append(area)
 					}
+					self.firstSound = Sound(dict: walkDict["firstSound"] as NSDictionary)
+					self.lastSound = Sound(dict: walkDict["lastSound"] as NSDictionary)
+					self.outOfBoundsSound = Sound(dict: walkDict["outOfBoundsSound"] as NSDictionary)
 					completionHandler(true)
 				} else {
 					completionHandler(false)
