@@ -17,7 +17,7 @@ class Trigger {
 		didSet {
 			var error: NSError?
 			self.audioPlayer = AVAudioPlayer(data: self.sound?.data, error: &error)
-			self.audioPlayer?.numberOfLoops = 0
+			self.audioPlayer?.numberOfLoops = -1
 			self.audioPlayer?.volume = 0
 			if self.running {
 				self.audioPlayer?.play()
@@ -33,6 +33,7 @@ class Trigger {
 class GPSTrigger: Trigger {
 	var location: CLLocation
 	var radius: Int
+	var url: String?
 	
 	init(location: CLLocation, radius: Int) {
 		self.location = location
@@ -44,6 +45,8 @@ class GPSTrigger: Trigger {
 		var coords: [Double] = dict["location"] as [Double]
 		self.location = CLLocation(latitude: coords[0], longitude: coords[1])
 		self.radius = dict["radius"] as Int
+		self.url = dict["url"] as? String
+		
 		super.init()
 	}
 	

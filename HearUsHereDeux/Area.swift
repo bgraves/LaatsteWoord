@@ -64,7 +64,6 @@ class Area {
 					trigger.sound = sounds.removeAtIndex(0)
 				} else {
 					let volume = (log(distance/Double(trigger.radius)) * -1) / 4
-					println("Volume: \(volume)")
 					trigger.audioPlayer?.volume = Float(volume)
 				}
 			}

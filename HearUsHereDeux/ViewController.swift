@@ -22,12 +22,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	var locationManager: CLLocationManager!
 	var walk: Walk = Walk()
 	
-	var firstAudioPlayer: AVAudioPlayer!
-	var lastAudioPlayer: AVAudioPlayer!
-	var outOfBoundsAudioPlayer: AVAudioPlayer!
+	var firstAudioPlayer: AVAudioPlayer?
+	var lastAudioPlayer: AVAudioPlayer?
+	var outOfBoundsAudioPlayer: AVAudioPlayer?
 	
 	var completedIntro = false
 	var running = false
+	
+	var sounds2Load = 0
+	var soundsLoaded = 0
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -40,55 +43,34 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		
 		walk.load({(success: Bool) -> Void in
 			if success {
-				var sounds2Load = 0
-				var soundsLoaded = 0
 				for area in self.walk.areas {
-					sounds2Load += area.sounds.count
+					self.sounds2Load += area.sounds.count
 					
-					dispatch_async(dispatch_get_main_queue(), {
-						let message = "\(soundsLoaded) of \(sounds2Load) sounds loaded..."
+					dispatch_async(dispatch_get_main_queue(), { [unowned self] in
+						let message = "\(self.soundsLoaded) of \(self.sounds2Load) sounds loaded..."
 						self.label.text = message
 					})
 					
 					area.load({ (sound: Sound) -> Void in
-						++soundsLoaded
-						self.updateLoadMessage(sounds2Load, soundsLoaded: soundsLoaded)
+						++self.soundsLoaded
+						self.updateLoadMessage()
 					})
+					
+					for trigger in area.triggers {
+						if let url = trigger.url {
+							++self.sounds2Load
+							let sound = Sound(resourceURL: url)
+							sound.load({
+								trigger.sound = sound
+								++self.soundsLoaded
+							})
+						}
+					}
 				}
 				
-				++sounds2Load
-				self.walk.firstSound.load({
-					var error: NSError?
-					self.firstAudioPlayer = AVAudioPlayer(data: self.walk.firstSound.data, error: &error)
-					self.firstAudioPlayer.numberOfLoops = 0
-					self.firstAudioPlayer.volume = 1
-					self.firstAudioPlayer.delegate = self
-					soundsLoaded++
-					self.updateLoadMessage(sounds2Load, soundsLoaded: soundsLoaded)
-				})
-				
-				++sounds2Load
-				self.walk.lastSound.load({
-					var error: NSError?
-					self.lastAudioPlayer = AVAudioPlayer(data: self.walk.lastSound.data, error: &error)
-					self.lastAudioPlayer.numberOfLoops = 0
-					self.lastAudioPlayer.volume = 1
-					self.lastAudioPlayer.delegate = self
-					soundsLoaded++
-					self.updateLoadMessage(sounds2Load, soundsLoaded: soundsLoaded)
-				})
-				
-				++sounds2Load
-				self.walk.outOfBoundsSound.load({
-					var error: NSError?
-					self.outOfBoundsAudioPlayer = AVAudioPlayer(data: self.walk.outOfBoundsSound.data, error: &error)
-					self.outOfBoundsAudioPlayer.numberOfLoops = -1
-					self.outOfBoundsAudioPlayer.volume = 1
-					self.outOfBoundsAudioPlayer.delegate = self
-					soundsLoaded++
-					self.updateLoadMessage(sounds2Load, soundsLoaded: soundsLoaded)
-				})
-				
+				self.initializePlayerWithSound(self.walk.firstSound, callback: { (player: AVAudioPlayer) in self.firstAudioPlayer = player })
+				self.initializePlayerWithSound(self.walk.lastSound, callback: { (player: AVAudioPlayer) in self.lastAudioPlayer = player })
+				self.initializePlayerWithSound(self.walk.outOfBoundsSound, callback: { (player: AVAudioPlayer) in self.outOfBoundsAudioPlayer = player })
 				
 				self.addOverlays()
 			} else {
@@ -114,8 +96,22 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		
 		if self.running {
 			self.button.setTitle("Stop", forState: UIControlState.Normal)
+			if !self.completedIntro {
+				if let player = self.firstAudioPlayer {
+					if !player.playing { player.play() }
+				}
+			}
 		} else {
 			self.button.setTitle("Start", forState: UIControlState.Normal)
+			if let player = self.firstAudioPlayer {
+				player.stop()
+			}
+			if let player = self.lastAudioPlayer {
+				player.stop()
+			}
+			if let player = self.outOfBoundsAudioPlayer {
+				player.stop()
+			}
 		}
 	}
 	
@@ -147,13 +143,38 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		return CGPathContainsPoint(polygonRenderer.path, nil, point, false);
 	}
 	
-	func updateLoadMessage(sounds2Load: Int, soundsLoaded: Int) {
+	func initializePlayerWithSound(sound: Sound, callback: (player: AVAudioPlayer) -> Void) {
+		self.sounds2Load++
+		sound.load({ [unowned self] in
+			var error: NSError?
+			if let player = AVAudioPlayer(data: sound.data, error: &error) {
+				if error == nil {
+					player.numberOfLoops = 0
+					player.volume = 1
+					player.delegate = self
+					self.soundsLoaded++
+					self.updateLoadMessage()
+					callback(player: player)
+				} else {
+					self.showAlert(error!.localizedDescription)
+				}
+			}
+		})
+	}
+	
+	func showAlert(message: String) {
+		let alert = UIAlertView()
+		alert.title = "Laaste Woord"
+		alert.message = message
+		alert.addButtonWithTitle("OK")
+		alert.show()
+	}
+	
+	func updateLoadMessage() {
 		let message = "\(soundsLoaded) of \(sounds2Load) sounds loaded..."
-		println(message)
-		dispatch_async(dispatch_get_main_queue(), {
+		dispatch_async(dispatch_get_main_queue(), { [unowned self] in
 			self.label.text = message
-			
-			if soundsLoaded == sounds2Load {
+			if self.soundsLoaded == self.sounds2Load {
 				self.infoView.hidden = true
 				self.actView.stopAnimating()
 			}
@@ -174,8 +195,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		}
 		
 		if !completedIntro {
-			if self.firstAudioPlayer != nil && !self.firstAudioPlayer.playing {
-				self.firstAudioPlayer.play()
+			if let player = self.firstAudioPlayer {
+				if !player.playing { player.play() }
 			}
 			return
 		}
@@ -193,17 +214,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		}
 		
 		if complete {
-			self.lastAudioPlayer.play()
+			if let player = self.lastAudioPlayer {
+				if !player.playing { player.play() }
+			}
 		}
 		
-		if !inBounds {
-			println("User is out of bounds.")
-			if !self.outOfBoundsAudioPlayer.playing {
-				self.outOfBoundsAudioPlayer.play()
-			}
-		} else {
-			if self.outOfBoundsAudioPlayer.playing {
-				self.outOfBoundsAudioPlayer.stop()
+		if let player = self.outOfBoundsAudioPlayer {
+			if !inBounds {
+				println("User is out of bounds.")
+				if !player.playing { player.play() }
+			} else {
+				player.stop()
 			}
 		}
 	}
@@ -228,6 +249,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
 		if player == self.firstAudioPlayer {
 			self.completedIntro = true
+			player.stop()
 		}
 	}
 }
