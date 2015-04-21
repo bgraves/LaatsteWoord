@@ -8,6 +8,9 @@
 
 import AVFoundation
 import UIKit
+import Fabric
+import Crashlytics
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -31,6 +34,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if let catError = categoryError {
 			NSLog("Error setting audio category: \(catError.code)")
 		}
+		
+		Fabric.with([Crashlytics()])
 		
 		return true
 	}

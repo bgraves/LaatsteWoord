@@ -32,6 +32,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	var sounds2Load = 0
 	var soundsLoaded = 0
 	
+	var infoDidShow = false
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -47,8 +49,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 					self.sounds2Load += area.sounds.count
 					
 					dispatch_async(dispatch_get_main_queue(), { [unowned self] in
-						let message = "\(self.soundsLoaded) of \(self.sounds2Load) sounds loaded..."
-						self.label.text = message
+						self.updateLoadMessage()
 					})
 					
 					area.load({ (sound: Sound) -> Void in
@@ -73,11 +74,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 				self.initializePlayerWithSound(self.walk.outOfBoundsSound, callback: { (player: AVAudioPlayer) in self.outOfBoundsAudioPlayer = player })
 				
 				self.addOverlays()
+				//self.addPins()
 			} else {
 				// TODO : alert the user - JBG
 				println("Something went wrong")
 			}
 		})
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		if !infoDidShow {
+			infoDidShow = true
+			performSegueWithIdentifier("toInfo", sender: nil)
+		}
 	}
 
 	override func didReceiveMemoryWarning() {
@@ -95,14 +104,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		}
 		
 		if self.running {
-			self.button.setTitle("Stop", forState: UIControlState.Normal)
+			self.button.setImage(UIImage(named: "Stop"), forState: .Normal)
 			if !self.completedIntro {
 				if let player = self.firstAudioPlayer {
 					if !player.playing { player.play() }
 				}
 			}
 		} else {
-			self.button.setTitle("Start", forState: UIControlState.Normal)
+			self.button.setImage(UIImage(named: "Start"), forState: .Normal)
 			if let player = self.firstAudioPlayer {
 				player.stop()
 			}
@@ -116,23 +125,49 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	
 	func addOverlays() {
+		dispatch_async(dispatch_get_main_queue(), { [unowned self] in
+			self.mapView.addOverlay(self.walk.polygon)
+			
+			// While we're at it just re-center/zoom the map - JBG
+			var region = self.mapView.region
+			var span = MKCoordinateSpanMake(0.01, 0.01)
+			region.span = span
+			region.center = self.walk.location()
+			self.mapView.region = region
+		})
+	}
+
+//	func addOverlays() {
+//		for area in walk.areas {
+//			var points = [MKMapPoint]()
+//			for var i = 0; i < area.coordinates.count; i+=2 {
+//				let c = CLLocationCoordinate2DMake(area.coordinates[i], area.coordinates[i+1])
+//				points.append(MKMapPointForCoordinate(c))
+//			}
+//			area.polygon = MKPolygon(points: &points, count: points.count)
+//			dispatch_async(dispatch_get_main_queue(), {
+//				self.mapView.addOverlay(area.polygon)
+//				// While we're at it just re-center/zoom the map - JBG
+//				var region = self.mapView.region
+//				var span = MKCoordinateSpanMake(0.01, 0.01)
+//				region.span = span
+//				region.center = self.walk.location()
+//				self.mapView.region = region
+//			})
+//		}
+//	}
+	
+	func addPins() {
 		for area in walk.areas {
-			var points = [MKMapPoint]()
-			for var i = 0; i < area.coordinates.count; i+=2 {
-				let c = CLLocationCoordinate2DMake(area.coordinates[i], area.coordinates[i+1])
-				points.append(MKMapPointForCoordinate(c))
+			for trigger in area.triggers {
+				dispatch_async(dispatch_get_main_queue(), {
+					var pin = MapPin(coordinate: trigger.location.coordinate, addressDictionary: nil)
+					if let sound = trigger.sound {
+						pin.trackTitle = sound.resourceURL
+					}
+					self.mapView.addAnnotation(pin)
+				})
 			}
-			area.polygon = MKPolygon(points: &points, count: points.count)
-			dispatch_async(dispatch_get_main_queue(), {
-				self.mapView.addOverlay(area.polygon)
-				
-				// While we're at it just re-center/zoom the map - JBG
-				var region = self.mapView.region
-				var span = MKCoordinateSpanMake(0.01, 0.01)
-				region.span = span
-				region.center = self.walk.location()
-				self.mapView.region = region
-			})
 		}
 	}
 	
@@ -187,7 +222,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 
 	func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-		let location = locations[0] as CLLocation
+		let location = locations[0] as! CLLocation
 		println("didUpdateLocations \(location.coordinate.latitude), \(location.coordinate.longitude)")
 		
 		if !running {
@@ -205,9 +240,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		var inBounds = false
 		for area in walk.areas {
 			let areaContainsPoint = self.areaContains(area, location: location)
-			if areaContainsPoint {
-				area.checkLocation(locations[0] as CLLocation)
-			}
+			area.checkLocation(locations[0] as! CLLocation)
 			let areaComplete = area.isCompleted()
 			complete = complete && areaComplete
 			inBounds = inBounds || areaContainsPoint
@@ -230,14 +263,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	
 	func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-		if status == CLAuthorizationStatus.Authorized {
+		if status == CLAuthorizationStatus.AuthorizedAlways {
 			self.locationManager.startUpdatingLocation()
 		}
 	}
 	
 	// MKMapViewDelegate - JBG
 	func mapView(mapView: MKMapView!, rendererForOverlay overlay: MKOverlay!) -> MKOverlayRenderer! {
-		let polygon = overlay as MKPolygon
+		let polygon = overlay as! MKPolygon
 		let renderer = MKPolygonRenderer(polygon: polygon)
 		renderer.fillColor = UIColor(red: 253.0/255.0, green: 232.0/255.0, blue: 17.0/255.0, alpha: 0.33)
 		renderer.strokeColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.9)

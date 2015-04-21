@@ -42,9 +42,9 @@ class GPSTrigger: Trigger {
 	}
 	
 	init(dict: NSDictionary) {
-		var coords: [Double] = dict["location"] as [Double]
+		var coords: [Double] = dict["location"] as! [Double]
 		self.location = CLLocation(latitude: coords[0], longitude: coords[1])
-		self.radius = dict["radius"] as Int
+		self.radius = dict["radius"] as! Int
 		self.url = dict["url"] as? String
 		
 		super.init()

@@ -20,13 +20,14 @@ class Sound {
 	}
 	
 	convenience init(dict: NSDictionary) {
-		let url = dict["url"] as String
+		let url = dict["url"] as! String
 		self.init(resourceURL: url)
 	}
 	
 	func load(completionHandler:() -> Void) {
 		let pathStr = getCachePath(resourceURL)
 		if let cachedData = getCachedSound(pathStr) {
+			println("In cache: \(pathStr)")
 			self.data.appendData(cachedData)
 			self.loaded = true
 			completionHandler()
@@ -37,13 +38,23 @@ class Sound {
 			
 			NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(),
 				completionHandler:{ (response:NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-					self.data.appendData(data)
-					var error: NSError?
-					if data.writeToFile(pathStr, options: .DataWritingAtomic, error: &error) {
-						self.loaded = true
-						completionHandler()
+					if data != nil {
+						self.data.appendData(data)
+						var error: NSError?
+						if data.writeToFile(pathStr, options: .DataWritingAtomic, error: &error) {
+							self.loaded = true
+							println("Sound fetched from \(self.resourceURL)")
+							completionHandler()
+						} else {
+							println("Failed file write \(error?.localizedDescription)")
+						}
 					} else {
-						println("Failed file write \(error?.localizedDescription)")
+						println("Download failed for \(self.resourceURL)")
+						if let error = error {
+							println(error.localizedDescription)
+							// Try again? - JBG
+							self.load(completionHandler)
+						}
 					}
 			})
 		}
@@ -53,14 +64,13 @@ class Sound {
 		let fileComponents = resourceURL.componentsSeparatedByString("/")
 		let fileStr = fileComponents[fileComponents.count - 1]
 		let pathStr = NSTemporaryDirectory() + fileStr
-		println("Cache: \(pathStr)")
 		return pathStr
 
 	}
 	
 	func getCachedSound(pathStr: String) -> NSData? {
 		if NSFileManager().fileExistsAtPath(pathStr) {
-			return (NSData.dataWithContentsOfMappedFile(pathStr) as NSData)
+			return (NSData.dataWithContentsOfMappedFile(pathStr) as! NSData)
 		} else {
 			return nil
 		}

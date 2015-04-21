@@ -11,7 +11,6 @@
 		3101A7CF1A64025600E16340 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3101A7CE1A64025600E16340 /* ViewController.swift */; };
 		3101A7D21A64025600E16340 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3101A7D01A64025600E16340 /* Main.storyboard */; };
 		3101A7D41A64025600E16340 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3101A7D31A64025600E16340 /* Images.xcassets */; };
-		3101A7D71A64025600E16340 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3101A7D51A64025600E16340 /* LaunchScreen.xib */; };
 		3101A7E31A64025600E16340 /* HearUsHereDeuxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3101A7E21A64025600E16340 /* HearUsHereDeuxTests.swift */; };
 		3101A7ED1A64036E00E16340 /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3101A7EC1A64036E00E16340 /* Sound.swift */; };
 		3101A7EF1A6410CE00E16340 /* Trigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3101A7EE1A6410CE00E16340 /* Trigger.swift */; };
@@ -20,6 +19,12 @@
 		3101A7F51A64191C00E16340 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3101A7F41A64191C00E16340 /* AVFoundation.framework */; };
 		3101A7F71A64273400E16340 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3101A7F61A64273400E16340 /* MapKit.framework */; };
 		3101A7F91A652F5700E16340 /* Walk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3101A7F81A652F5700E16340 /* Walk.swift */; };
+		313108891AE0EED700326539 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313108881AE0EED700326539 /* IntroViewController.swift */; };
+		3131088C1AE1433200326539 /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3131088B1AE1433200326539 /* MapPin.swift */; };
+		3185E2701AD430E3003F19FB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3185E26F1AD430E3003F19FB /* LaunchScreen.xib */; };
+		31CBA9B51ACE905000549871 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CBA9B31ACE905000549871 /* Crashlytics.framework */; };
+		31CBA9B61ACE905100549871 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CBA9B41ACE905000549871 /* Fabric.framework */; };
+		31D408B81AD7EB880032C176 /* CreditsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D408B71AD7EB880032C176 /* CreditsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +44,6 @@
 		3101A7CE1A64025600E16340 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		3101A7D11A64025600E16340 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3101A7D31A64025600E16340 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		3101A7D61A64025600E16340 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		3101A7DC1A64025600E16340 /* HearUsHereDeuxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HearUsHereDeuxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3101A7E11A64025600E16340 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3101A7E21A64025600E16340 /* HearUsHereDeuxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearUsHereDeuxTests.swift; sourceTree = "<group>"; };
@@ -50,6 +54,12 @@
 		3101A7F41A64191C00E16340 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		3101A7F61A64273400E16340 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		3101A7F81A652F5700E16340 /* Walk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Walk.swift; sourceTree = "<group>"; };
+		313108881AE0EED700326539 /* IntroViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
+		3131088B1AE1433200326539 /* MapPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
+		3185E26F1AD430E3003F19FB /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		31CBA9B31ACE905000549871 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		31CBA9B41ACE905000549871 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		31D408B71AD7EB880032C176 /* CreditsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,7 +68,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3101A7F51A64191C00E16340 /* AVFoundation.framework in Frameworks */,
+				31CBA9B61ACE905100549871 /* Fabric.framework in Frameworks */,
 				3101A7F71A64273400E16340 /* MapKit.framework in Frameworks */,
+				31CBA9B51ACE905000549871 /* Crashlytics.framework in Frameworks */,
 				3101A7F11A64114700E16340 /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,6 +88,8 @@
 		3101A7BE1A64025600E16340 = {
 			isa = PBXGroup;
 			children = (
+				31CBA9B31ACE905000549871 /* Crashlytics.framework */,
+				31CBA9B41ACE905000549871 /* Fabric.framework */,
 				3101A7F61A64273400E16340 /* MapKit.framework */,
 				3101A7F41A64191C00E16340 /* AVFoundation.framework */,
 				3101A7F01A64114700E16340 /* CoreLocation.framework */,
@@ -97,16 +111,19 @@
 		3101A7C91A64025600E16340 /* HearUsHereDeux */ = {
 			isa = PBXGroup;
 			children = (
+				3185E26F1AD430E3003F19FB /* LaunchScreen.xib */,
 				3101A7CC1A64025600E16340 /* AppDelegate.swift */,
 				3101A7CE1A64025600E16340 /* ViewController.swift */,
 				3101A7D01A64025600E16340 /* Main.storyboard */,
 				3101A7D31A64025600E16340 /* Images.xcassets */,
-				3101A7D51A64025600E16340 /* LaunchScreen.xib */,
 				3101A7CA1A64025600E16340 /* Supporting Files */,
 				3101A7EC1A64036E00E16340 /* Sound.swift */,
 				3101A7EE1A6410CE00E16340 /* Trigger.swift */,
 				3101A7F21A64127100E16340 /* Area.swift */,
 				3101A7F81A652F5700E16340 /* Walk.swift */,
+				31D408B71AD7EB880032C176 /* CreditsViewController.swift */,
+				313108881AE0EED700326539 /* IntroViewController.swift */,
+				3131088B1AE1433200326539 /* MapPin.swift */,
 			);
 			path = HearUsHereDeux;
 			sourceTree = "<group>";
@@ -146,6 +163,7 @@
 				3101A7C31A64025600E16340 /* Sources */,
 				3101A7C41A64025600E16340 /* Frameworks */,
 				3101A7C51A64025600E16340 /* Resources */,
+				31CBA9B21ACE903200549871 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -226,7 +244,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3101A7D21A64025600E16340 /* Main.storyboard in Resources */,
-				3101A7D71A64025600E16340 /* LaunchScreen.xib in Resources */,
+				3185E2701AD430E3003F19FB /* LaunchScreen.xib in Resources */,
 				3101A7D41A64025600E16340 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,6 +258,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		31CBA9B21ACE903200549871 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 5e32d1b5b215397ac7f8b0459db9cb1005a12833 4b0e93444682a6accef8330d3b62278eb139ab5429716ca6bb708965db085023";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3101A7C31A64025600E16340 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -247,10 +281,13 @@
 			files = (
 				3101A7F31A64127100E16340 /* Area.swift in Sources */,
 				3101A7EF1A6410CE00E16340 /* Trigger.swift in Sources */,
+				31D408B81AD7EB880032C176 /* CreditsViewController.swift in Sources */,
+				3131088C1AE1433200326539 /* MapPin.swift in Sources */,
 				3101A7CF1A64025600E16340 /* ViewController.swift in Sources */,
 				3101A7ED1A64036E00E16340 /* Sound.swift in Sources */,
 				3101A7F91A652F5700E16340 /* Walk.swift in Sources */,
 				3101A7CD1A64025600E16340 /* AppDelegate.swift in Sources */,
+				313108891AE0EED700326539 /* IntroViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,14 +316,6 @@
 				3101A7D11A64025600E16340 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		3101A7D51A64025600E16340 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3101A7D61A64025600E16340 /* Base */,
-			);
-			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -375,10 +404,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = HearUsHereDeux/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -386,10 +423,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = HearUsHereDeux/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

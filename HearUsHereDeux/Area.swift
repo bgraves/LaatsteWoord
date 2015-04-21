@@ -24,22 +24,30 @@ class Area {
 	
 	convenience init(dict: NSDictionary) {
 		self.init()
-		var triggerDicts: NSArray = dict["triggers"] as NSArray
+		var triggerDicts: NSArray = dict["triggers"] as! NSArray
 		for triggerDict in triggerDicts {
-			var trigger: GPSTrigger = GPSTrigger(dict: triggerDict as NSDictionary)
+			var trigger: GPSTrigger = GPSTrigger(dict: triggerDict as! NSDictionary)
 			self.triggers.append(trigger)
 		}
 		
-		var soundDicts: NSArray = dict["sounds"] as NSArray
+		var soundDicts: NSArray = dict["sounds"] as! NSArray
 		for soundDict in soundDicts {
-			var sound: Sound = Sound(dict: soundDict as NSDictionary)
+			var sound: Sound = Sound(dict: soundDict as! NSDictionary)
 			self.sounds.append(sound)
 		}
 		
-		var coordinates: NSArray = dict["coords"] as NSArray
+		var coordinates: NSArray = dict["coords"] as! NSArray
 		for coordinate in coordinates {
-			self.coordinates.append(coordinate as Double)
+			self.coordinates.append(coordinate as! Double)
 		}
+		
+		// We need the polygon to check if the user is in a area - JBG
+		var points = [MKMapPoint]()
+		for var i = 0; i < coordinates.count; i+=2 {
+			let c = CLLocationCoordinate2DMake(coordinates[i] as! CLLocationDegrees, coordinates[i+1] as! CLLocationDegrees)
+			points.append(MKMapPointForCoordinate(c))
+		}
+		polygon = MKPolygon(points: &points, count: points.count)
 	}
 	
 	func load(completionHander: (Sound) -> Void) {
@@ -62,10 +70,16 @@ class Area {
 			if distance <= Double(trigger.radius) {
 				if trigger.sound == nil && sounds.count > 0 {
 					trigger.sound = sounds.removeAtIndex(0)
+					trigger.audioPlayer?.numberOfLoops = 0
 				} else {
-					let volume = (log(distance/Double(trigger.radius)) * -1) / 4
+					var volume = -(1/pow(Double(trigger.radius), 2)) * pow(distance, 2) + 1
+					volume = min(volume, 1)
+					volume = max(volume, 0)
+					//let volume = (log(distance/Double(trigger.radius)) * -1) / 4
 					trigger.audioPlayer?.volume = Float(volume)
 				}
+			} else {
+				trigger.audioPlayer?.volume = 0
 			}
 		}
 	}
