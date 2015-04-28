@@ -11,6 +11,7 @@ import CoreLocation
 import Foundation
 
 class Trigger {
+	var checkArea = false
 	var running = false
 	var audioPlayer: AVAudioPlayer?
 	var sound: Sound? {

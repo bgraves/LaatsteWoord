@@ -65,23 +65,35 @@ class Area {
 		}
 		
 		for trigger in triggers {
-			let distance = location.distanceFromLocation(trigger.location)
-			println("Distance from trigger: \(distance)")
-			if distance <= Double(trigger.radius) {
-				if trigger.sound == nil && sounds.count > 0 {
-					trigger.sound = sounds.removeAtIndex(0)
-					trigger.audioPlayer?.numberOfLoops = 0
+			if !trigger.checkArea || contains(location) {
+				let distance = location.distanceFromLocation(trigger.location)
+				println("Distance from trigger: \(distance)")
+				if distance <= Double(trigger.radius) {
+					if trigger.sound == nil && sounds.count > 0 {
+						trigger.sound = sounds.removeAtIndex(0)
+						trigger.audioPlayer?.numberOfLoops = 0
+						trigger.checkArea = true
+					} else {
+						var volume = -(1/pow(Double(trigger.radius), 2)) * pow(distance, 2) + 1
+						volume = min(volume, 1)
+						volume = max(volume, 0)
+						//let volume = (log(distance/Double(trigger.radius)) * -1) / 4
+						trigger.audioPlayer?.volume = Float(volume)
+					}
 				} else {
-					var volume = -(1/pow(Double(trigger.radius), 2)) * pow(distance, 2) + 1
-					volume = min(volume, 1)
-					volume = max(volume, 0)
-					//let volume = (log(distance/Double(trigger.radius)) * -1) / 4
-					trigger.audioPlayer?.volume = Float(volume)
+					trigger.audioPlayer?.volume = 0
 				}
 			} else {
 				trigger.audioPlayer?.volume = 0
 			}
 		}
+	}
+	
+	func contains(location: CLLocation) -> Bool {
+		let mapPoint = MKMapPointForCoordinate(location.coordinate)
+		let polygonRenderer = MKPolygonRenderer(polygon: polygon)
+		let point = polygonRenderer.pointForMapPoint(mapPoint)
+		return CGPathContainsPoint(polygonRenderer.path, nil, point, false);
 	}
 	
 	func bounds() -> [CLLocationCoordinate2D] {
@@ -121,8 +133,8 @@ class Area {
 		}
 		var playing = false
 		for trigger in triggers {
-			if let player = trigger.audioPlayer {
-				playing = playing && player.playing
+			if let player = trigger.audioPlayer where trigger.checkArea {
+				playing = playing || player.playing
 			}
 		}
 		return !playing

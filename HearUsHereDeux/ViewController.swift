@@ -34,6 +34,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	
 	var infoDidShow = false
 	
+	var userPin: MapPin?
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -104,6 +106,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		}
 		
 		if self.running {
+			locationManager.startUpdatingLocation()
 			self.button.setImage(UIImage(named: "Stop"), forState: .Normal)
 			if !self.completedIntro {
 				if let player = self.firstAudioPlayer {
@@ -111,6 +114,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 				}
 			}
 		} else {
+			locationManager.stopUpdatingLocation()
 			self.button.setImage(UIImage(named: "Start"), forState: .Normal)
 			if let player = self.firstAudioPlayer {
 				player.stop()
@@ -121,7 +125,31 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 			if let player = self.outOfBoundsAudioPlayer {
 				player.stop()
 			}
+			
+			if let userPin = userPin {
+				mapView.removeAnnotation(userPin)
+			}
 		}
+	}
+	
+	@IBAction func manualUserLocation(recognizer: UILongPressGestureRecognizer) {
+		locationManager.stopUpdatingLocation()
+		
+		if let userPin = userPin {
+			self.mapView.removeAnnotation(userPin)
+		}
+		
+		let point = recognizer.locationInView(mapView)
+		let coord = mapView.convertPoint(point, toCoordinateFromView: mapView)
+		
+		userPin = MapPin(coordinate: coord, addressDictionary: nil)
+		if let userPin = userPin {
+			userPin.trackTitle = "User location"
+			self.mapView.addAnnotation(userPin)
+		}
+		
+		let location = CLLocation(latitude: coord.latitude, longitude: coord.longitude)
+		self.locationManager(locationManager, didUpdateLocations: [location])
 	}
 	
 	func addOverlays() {
@@ -169,13 +197,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 				})
 			}
 		}
-	}
-	
-	func areaContains(area: Area, location: CLLocation) -> Bool {
-		let mapPoint = MKMapPointForCoordinate(location.coordinate)
-		let polygonRenderer = MKPolygonRenderer(polygon: area.polygon)
-		let point = polygonRenderer.pointForMapPoint(mapPoint)
-		return CGPathContainsPoint(polygonRenderer.path, nil, point, false);
 	}
 	
 	func initializePlayerWithSound(sound: Sound, callback: (player: AVAudioPlayer) -> Void) {
@@ -239,7 +260,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		var complete = true
 		var inBounds = false
 		for area in walk.areas {
-			let areaContainsPoint = self.areaContains(area, location: location)
+			let areaContainsPoint = area.contains(location)
 			area.checkLocation(locations[0] as! CLLocation)
 			let areaComplete = area.isCompleted()
 			complete = complete && areaComplete

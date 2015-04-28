@@ -16,7 +16,10 @@ class IntroViewController: UIViewController {
 	
 	
 	override func viewDidLoad() {
-		scrollView.contentSize = imageView.frame.size
+		if let url = NSURL(string: "http://hearushere.nl/triggers/infoscreen.png"), data = NSData(contentsOfURL: url) {
+			imageView.image = UIImage(data: data)
+			scrollView.contentSize = imageView.frame.size
+		}
 	}
 	
 	override func prefersStatusBarHidden() -> Bool {
